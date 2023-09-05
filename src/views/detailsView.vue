@@ -21,6 +21,9 @@ import { useRoute } from 'vue-router';
 // });
 
 const route = useRoute();
+let id =route.query.id// new URLSearchParams(window.location.search).get('id'); //route.query.id
+
+
 let data = reactive({
       postDetails:{
         title:'',
@@ -28,10 +31,6 @@ let data = reactive({
         content:"dummy"
       }
     });
-let id =route.query.id// new URLSearchParams(window.location.search).get('id'); //route.query.id
-
-let name =route.query.name // new URLSearchParams(window.location.search).get('id'); //route.query.id
-
 
 onMounted(async ()=>{
   console.log("id: ", id)
@@ -39,8 +38,8 @@ onMounted(async ()=>{
   const resJson = await response.json();
   console.log(resJson);
   if(resJson && resJson.postDetails)
-    data = resJson;
-  console.log("data: ", data.value);
+    data = Object.assign(data,resJson);
+  console.log("data: ", data);
 })
 </script>
 
