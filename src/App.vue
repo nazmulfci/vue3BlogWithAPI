@@ -1,8 +1,10 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { ref } from 'vue'
 
 const data = ref();
+const searchQuery = ref();
+const router = useRouter();
 
 async function getData() {
   const response = await fetch("https://basic-blog.teamrabbil.com/api/post-categories");
@@ -11,6 +13,14 @@ async function getData() {
 }
 
 getData();
+
+
+function performSearch() {
+      // This method will be called on each keyup event in the search box.
+      // You can add any additional logic here if needed.
+      console.log(searchQuery.value);
+      router.push({ name: 'search', params: { query: searchQuery.value } });
+    }
 
 </script>
 
@@ -39,15 +49,25 @@ getData();
 
           </ul>
 
-
+          <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2"
+      v-model="searchQuery"
+        placeholder="Search for products..."
+        @keyup="performSearch"
+       type="search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
 
         </div>
       </nav>
+
+
+      
 
     </div>
   </header>
 
 
-  <RouterView />
-  <!-- {{ data }} -->
+  <router-view :key="$route.fullPath"></router-view>
+  <!-- // :searchQuery="searchQuery" // {{ data }} -->
 </template>
