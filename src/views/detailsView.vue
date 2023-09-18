@@ -1,28 +1,54 @@
 <script setup>
-let url = new URLSearchParams(window.location.search).get('id');
-let id = url;
+import { onMounted, reactive, ref } from 'vue'
+import { useRoute } from 'vue-router';
 
 
-import { ref } from 'vue'
 
-const data = ref();
 
-async function getdata() {
-  
+// best practice
+// - onMounted hook have to use at mounting component.
+
+
+
+
+// initialize with default object. Because at first when template is rendering, postDetails object is necessary.
+// let data = ref({
+//   postDetails:{
+//     title:'',
+//     img:'#',
+//     content:"dummy"
+//   }
+// });
+
+const route = useRoute();
+let id =route.query.id// new URLSearchParams(window.location.search).get('id'); //route.query.id
+
+
+let data = reactive({
+      postDetails:{
+        title:'',
+        img:'#',
+        content:"dummy"
+      }
+    });
+
+onMounted(async ()=>{
+  console.log("id: ", id)
   const response = await fetch("https://basic-blog.teamrabbil.com/api/post-details/" + id);
-  data.value = await response.json();
-  console.log(data.value);
-}
-
-getdata();
+  const resJson = await response.json();
+  console.log(resJson);
+  if(resJson && resJson.postDetails)
+    data = Object.assign(data,resJson);
+  console.log("data: ", data);
+})
 </script>
 
 <template>
 
 <div class="container">
   <div class="about">
-    <h4>Post Details : 
-      <span v-if="data.postDetails.title">{{ data.postDetails.title }}</span></h4>
+    <h4>Post Details : {{ data }}
+      <span>{{  data.postDetails.title }}</span></h4>
   </div>
   <hr>
 
@@ -31,9 +57,9 @@ getdata();
     <div class="col-md-12">
 
       <div class="card">
-        <img v-if="data.postDetails" class="card-img-top" :src="data.postDetails.img" :alt="data.postDetails.title">
+        <img class="card-img-top" :src="data.postDetails.img" :alt="data.postDetails.title">
         <div class="card-body">
-          <p v-if="data.postDetails" class="card-text"> {{ data.postDetails.content }} </p>
+          <p class="card-text"> {{ data.postDetails.content }} </p>
         </div>
 
       </div>
@@ -41,6 +67,4 @@ getdata();
     </div>
   </div>
   </div>
-
-  <!-- {{ data }} -->
 </template>
